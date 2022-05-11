@@ -37,11 +37,14 @@ public class PlayerController {
     }
 
 
-//    @GetMapping(value = "/rest/players/{id}")
-//    public Player get(@PathVariable("id") Long id) {
-//        Player player = playerService.get(id);
-//        return player;
-//    }
+    @GetMapping(value = "/rest/players/{id}")
+    public ResponseEntity getPlayer(@RequestParam @PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(playerService.getPlayer(id));
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
 
     @GetMapping("/rest/players/count")

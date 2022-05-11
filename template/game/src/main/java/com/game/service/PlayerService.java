@@ -2,6 +2,7 @@ package com.game.service;
 
 
 import com.game.entity.Player;
+import com.game.exception.UserNotFoundException;
 import com.game.repository.PlayerRepo;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -25,9 +26,11 @@ public class PlayerService {
         return playerRepo.save(player);
         }
 
-    public Player get(Long id ) {
-        Session session = factory.getCurrentSession();
-        Player player = (Player) session.get(Player.class, id);
+    public Player getPlayer(Long id ) throws UserNotFoundException {
+        Player player = playerRepo.findById(id).get();
+        if (player == null) {
+            throw new UserNotFoundException("Пользователь не был найден");
+        }
         return player;
     }
 }
