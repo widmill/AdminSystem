@@ -1,8 +1,6 @@
 package com.game.entity;
 
 
-import org.springframework.stereotype.Component;
-
 import javax.persistence.*;
 import java.util.Date;
 
@@ -39,7 +37,7 @@ public class Player {
     private Integer untilNextLevel;
 
     @Column(name = "birthday")
-    private Date birthDay;
+    private Date birthday;
 
     @Column(name = "banned")
     private Boolean banned;
@@ -48,15 +46,13 @@ public class Player {
 
     }
 
-    public Player(String name, String title, Race race, Profession profession, Integer experience, Integer level, Integer untilNextLevel, Date birthDay, Boolean banned) {
+    public Player(String name, String title, Race race, Profession profession, Integer experience, Date birthday, Boolean banned) {
         this.name = name;
         this.title = title;
         this.race = race;
         this.profession = profession;
         this.experience = experience;
-        this.level = level;
-        this.untilNextLevel = untilNextLevel;
-        this.birthDay = birthDay;
+        this.birthday = birthday;
         this.banned = banned;
     }
 
@@ -124,12 +120,12 @@ public class Player {
         this.untilNextLevel = untilNextLevel;
     }
 
-    public Date getBirthDay() {
-        return birthDay;
+    public Date getBirthday() {
+        return birthday;
     }
 
-    public void setBirthDay(Date birthDay) {
-        this.birthDay = birthDay;
+    public void setBirthday(Date birthDay) {
+        this.birthday = birthDay;
     }
 
     public Boolean getBanned() {
