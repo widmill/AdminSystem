@@ -2,8 +2,9 @@ package com.game.service;
 
 
 import com.game.entity.Player;
-import com.game.exception.NotValidDateException;
-import com.game.exception.UserNotFoundException;
+import com.game.exception.NonValidDateException;
+import com.game.exception.NonValidExpException;
+import com.game.exception.PlayerNotFoundException;
 import com.game.repository.PlayerRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,9 +22,12 @@ public class PlayerService {
     PlayerRepo playerRepo;
 
     //добавление игрока
-    public Player addPlayer(Player player) throws ParseException, NotValidDateException {
+    public Player addPlayer(Player player) throws ParseException, NonValidDateException, NonValidExpException {
         if (!checkDate(player)) {
-            throw new NotValidDateException();
+            throw new NonValidDateException();
+        }
+        if (!checkExp(player)) {
+            throw new NonValidExpException();
         }
         lvlCount(player);
         untilNextLvlCount(player);
@@ -31,34 +35,44 @@ public class PlayerService {
     }
 
     //получить игрока по id
-    public Player getPlayer(Long id) throws UserNotFoundException {
+    public Player getPlayer(Long id) throws PlayerNotFoundException {
         if (id == 0) {
             throw new NullPointerException();
         }
         if (!playerRepo.findById(id).isPresent()) {
-            throw new UserNotFoundException("Игрок с таким id не найден");
+            throw new PlayerNotFoundException("Игрок с таким id не найден");
         }
-        Player player = playerRepo.findById(id).get();
-        return player;
+        return playerRepo.findById(id).get();
     }
+
     //проверка даты для создания
     private boolean checkDate(Player player) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-        Date date1 = sdf.parse("2000-01-01");
-        Date date2 = sdf.parse("3000-01-01");
+        Date date1 = sdf.parse("01-01-2000");
+        Date date2 = sdf.parse("01-01-3000");
         if (player.getBirthday().getTime() >= date1.getTime() && player.getBirthday().getTime() <=
                 date2.getTime()) {
             return true;
         }
         return false;
     }
+
+    //проверка экспы для создания
+    private boolean checkExp(Player player) {
+        if (player.getExperience() >= 0 && player.getExperience() <= 10_000_000) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     //удаление игрока
-    public void delete(Long id) throws UserNotFoundException {
+    public void delete(Long id) throws PlayerNotFoundException {
         if (id == 0) {
             throw new NullPointerException();
         }
         if (!playerRepo.findById(id).isPresent()) {
-            throw new UserNotFoundException("Игрок с таким id не найден");
+            throw new PlayerNotFoundException("Игрок с таким id не найден");
         }
         playerRepo.deleteById(id);
     }

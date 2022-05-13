@@ -37,6 +37,7 @@ public class Player {
     private Integer untilNextLevel;
 
     @Column(name = "birthday")
+    @Temporal(TemporalType.DATE)
     private Date birthday;
 
     @Column(name = "banned")
@@ -55,6 +56,8 @@ public class Player {
         this.birthday = birthday;
         this.banned = banned;
     }
+
+
 
     public Long getId() {
         return id;

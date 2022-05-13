@@ -1,17 +1,11 @@
 package com.game.controller;
 
 import com.game.entity.Player;
-import com.game.exception.UserNotFoundException;
-import com.game.repository.PlayerRepo;
+import com.game.exception.PlayerNotFoundException;
 import com.game.service.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping
@@ -29,22 +23,11 @@ public class PlayerController {
         }
     }
 
-//    @GetMapping("/rest/players")
-//    public ResponseEntity getPlayersList() {
-//        PlayerRepo playerRepo = null;
-//        try {
-//            return ResponseEntity.ok(playerRepo.findAll());
-//        } catch (NullPointerException e) {
-//            return ResponseEntity.badRequest().body("dsad");
-//        }
-//
-//    }
 
     @PostMapping("/rest/players/")
     public ResponseEntity add(@RequestBody Player player) {
         try {
-            playerService.addPlayer(player);
-            return ResponseEntity.ok("игрок был успешно добавлен");
+            return ResponseEntity.ok(playerService.addPlayer(player));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Произошла ошибка");
         }
@@ -57,7 +40,7 @@ public class PlayerController {
             return ResponseEntity.ok(playerService.getPlayer(id));
         } catch (NullPointerException e) {
             return ResponseEntity.badRequest().body("Игрок с id 0 не существует");
-        } catch (UserNotFoundException e) {
+        } catch (PlayerNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
@@ -79,7 +62,7 @@ public class PlayerController {
             return ResponseEntity.ok().body("Игрок удален");
         } catch (NullPointerException e) {
             return ResponseEntity.badRequest().body("Игрок с 0 id не существует");
-        } catch (UserNotFoundException e) {
+        } catch (PlayerNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
