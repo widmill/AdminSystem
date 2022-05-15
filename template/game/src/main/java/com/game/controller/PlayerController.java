@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -23,7 +24,7 @@ public class PlayerController {
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "title", required = false) String title,
             @RequestParam(value = "race", required = false) Race race,
-            @RequestParam(value = "profession", required = false)Profession profession,
+            @RequestParam(value = "profession", required = false) Profession profession,
             @RequestParam(value = "after", required = false) Long after,
             @RequestParam(value = "before", required = false) Long before,
             @RequestParam(value = "banned", required = false) Boolean banned,
@@ -48,7 +49,7 @@ public class PlayerController {
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "title", required = false) String title,
             @RequestParam(value = "race", required = false) Race race,
-            @RequestParam(value = "profession", required = false)Profession profession,
+            @RequestParam(value = "profession", required = false) Profession profession,
             @RequestParam(value = "after", required = false) Long after,
             @RequestParam(value = "before", required = false) Long before,
             @RequestParam(value = "banned", required = false) Boolean banned,
@@ -95,5 +96,26 @@ public class PlayerController {
         }
     }
 
+    @PostMapping("/rest/players/{id}")
+    public ResponseEntity updatePlayer(@PathVariable("id") Long id,
+                                       @RequestBody Player player) throws ParseException {
+        if (id == 0) {
+            return ResponseEntity.badRequest().body("Не существует игрока с 0 id");
+        }
+        final ResponseEntity<Player> entity = getPlayer(id);
+        final Player savedPlayer = entity.getBody();
+        if (savedPlayer == null) {
+            return entity;
+        }
 
+        final Player result;
+        try {
+            result = playerService.updatePlayer(savedPlayer, player);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Произошла ошибка");
+        }
+        return ResponseEntity.ok(result);
+
+
+    }
 }

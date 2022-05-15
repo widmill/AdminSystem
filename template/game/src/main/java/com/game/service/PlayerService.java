@@ -165,4 +165,63 @@ public class PlayerService {
         int next = 50 * (lvl + 1) * (lvl + 2) - exp;
         player.setUntilNextLevel(next);
     }
+
+    //update
+    public Player updatePlayer(Player oldPlayer, Player newPlayer) throws IllegalArgumentException, ParseException {
+        boolean shouldChangeRating = false;
+
+        final String name = newPlayer.getName();
+        if (name != null) {
+            if (isStringValid(name)) {
+                oldPlayer.setName(name);
+            } else {
+                throw new IllegalArgumentException();
+            }
+        }
+        final String title = newPlayer.getTitle();
+        if (title != null) {
+            if (isStringValid(title)) {
+                oldPlayer.setTitle(title);
+            } else {
+                throw new IllegalArgumentException();
+            }
+        }
+        if (newPlayer.getRace() != null) {
+            oldPlayer.setRace(newPlayer.getRace());
+        }
+        if (newPlayer.getProfession() != null) {
+            oldPlayer.setProfession(newPlayer.getProfession());
+        }
+        final Date birthday = newPlayer.getBirthday();
+        if (birthday != null) {
+            if (checkDate(newPlayer)) {
+                oldPlayer.setBirthday(birthday);
+                shouldChangeRating = true;
+            } else {
+                throw new IllegalArgumentException();
+            }
+        }
+        if (newPlayer.getBanned() != null) {
+            oldPlayer.setBanned(newPlayer.getBanned());
+            shouldChangeRating = true;
+        }
+        final Integer experience = newPlayer.getExperience();
+        if (experience != null) {
+            if (checkExp(newPlayer)) {
+                oldPlayer.setExperience(experience);
+                shouldChangeRating = true;
+            } else {
+                throw new IllegalArgumentException();
+            }
+            lvlCount(oldPlayer);
+            untilNextLvlCount(oldPlayer);
+        }
+
+        playerRepo.save(oldPlayer);
+        return oldPlayer;
+    }
+    private boolean isStringValid(String value) {
+        final int maxStringLength = 50;
+        return value != null && !value.isEmpty() && value.length() <= maxStringLength;
+    }
 }
